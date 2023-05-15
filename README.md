@@ -1,4 +1,4 @@
-# MSc_thesis_SoM
+# Supplementary Materials and code for Toro-Delgado _et al._ (in prep.)
 This repository contains the Supplementary materials for the final project of the Master in Bioinformatics for Health Sciences of Pompeu Fabra University, by the student Eric Toro-Delgado. Refer to the main text for the relevant references to the supplementary figures and tables.
 
 The contents of the `R_scripts` folder are as follows:
