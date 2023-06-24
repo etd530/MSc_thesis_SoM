@@ -49,7 +49,7 @@ df <- df[!(df$Species_binomial %in% c("Brenthis hecate",
                                       "Thymelicus lineola")),]
 
 # Discard uninfected samples
-df <- df[!is.na(df$Closest.reference.Wolbachia),]
+df <- df[!is.na(df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.),]
 tail(df)
 
 # Keep only genera where both species of the pair are infected
@@ -64,32 +64,32 @@ df <- df[df$Genus %in% infected_genera,]
 # we duplicate entries of samples coinfected and put one strain in each entry
 # to ease the counting of strains
 for (rownum in 1:nrow(df)){
-  strains <- df$Closest.reference.Wolbachia[rownum]
+  strains <- df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[rownum]
   if (grepl(",", strains, fixed = T)){
     strains_splitted <- strsplit(strains, ", ")[[1]]
     for (strain_num in 1:length(strains_splitted)){
       if(strain_num == 1){
-        df[rownum, "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[rownum, "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       } else {
         df[nrow(df) +1, ] <- df[rownum, ]
-        df[nrow(df), "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[nrow(df), "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       }
     }
   }
 }
 tail(df)
 
-# Erebia specimens mapped equally well to euryale_EE_932 and ligea_RO_EL_949, they always mapped slightly better to
-# euryale so we consider them that strain for this analysis
-df$Closest.reference.Wolbachia <- gsub("w.erebia_euryale.EE_932.v1.fna/w.erebia_ligea.RO_EL_949.v1.fna", 
-                                       "w.erebia_euryale.EE_932.v1.fna", df$Closest.reference.Wolbachia, fixed = T)
-
-# For P. eros we also have two strains with a slash, we will consider them the P. eros strain since it gets substantially higher coverages
-df$Closest.reference.Wolbachia <- gsub("w.polyommatus_eros.PE_1417.v2.fna/w.colias_crocea.Lep_ilColCroc_2.fna",
-                                       "w.polyommatus_eros.PE_1417.v2.fna", 
-                                       df$Closest.reference.Wolbachia, fixed = T)
-
-head(df)
+# # Erebia specimens mapped equally well to euryale_EE_932 and ligea_RO_EL_949, they always mapped slightly better to
+# # euryale so we consider them that strain for this analysis
+# df$Closest.reference.Wolbachia <- gsub("w.erebia_euryale.EE_932.v1.fna/w.erebia_ligea.RO_EL_949.v1.fna", 
+#                                        "w.erebia_euryale.EE_932.v1.fna", df$Closest.reference.Wolbachia, fixed = T)
+# 
+# # For P. eros we also have two strains with a slash, we will consider them the P. eros strain since it gets substantially higher coverages
+# df$Closest.reference.Wolbachia <- gsub("w.polyommatus_eros.PE_1417.v2.fna/w.colias_crocea.Lep_ilColCroc_2.fna",
+#                                        "w.polyommatus_eros.PE_1417.v2.fna", 
+#                                        df$Closest.reference.Wolbachia, fixed = T)
+# 
+# head(df)
 
 # Keep only pairs where both are infected (otherwise we can't get an ANI)
 pairs_traits <- pairs_traits[pairs_traits$Both.infected == 1,]
@@ -120,9 +120,9 @@ for (species1 in species_list){
     ANI_list <- c()
     subset2 <- df[df$Species_binomial == species2,]
     for (samplenum1 in 1:nrow(subset1)){
-      strain1 <- subset1$Closest.reference.Wolbachia[samplenum1]
+      strain1 <- subset1$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[samplenum1]
       for (samplenum2 in 1:nrow(subset2)){
-        strain2 <- subset2$Closest.reference.Wolbachia[samplenum2]
+        strain2 <- subset2$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[samplenum2]
         ANI_list[length(ANI_list)+1] <- ANI_matrix$ANI[ANI_matrix$Strain1 == strain1 & ANI_matrix$Strain2 == strain2]
         ANI_list[length(ANI_list)+1] <- ANI_matrix$ANI[ANI_matrix$Strain1 == strain2 & ANI_matrix$Strain2 == strain1]
       }

@@ -48,15 +48,15 @@ df <- df[!(df$Species_binomial %in% c("Brenthis hecate",
 # we duplicate entries of samples coinfected and put one strain in each entry
 # to ease the counting of strains
 for (rownum in 1:nrow(df)){
-  strains <- df$Closest.reference.Wolbachia[rownum]
+  strains <- df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[rownum]
   if (grepl(",", strains, fixed = T)){
     strains_splitted <- strsplit(strains, ", ")[[1]]
     for (strain_num in 1:length(strains_splitted)){
       if(strain_num == 1){
-        df[rownum, "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[rownum, "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       } else {
         df[nrow(df) +1, ] <- df[rownum, ]
-        df[nrow(df), "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[nrow(df), "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       }
     }
   }
@@ -92,8 +92,8 @@ for (dfnum in 1:length(dataframes_list)){
                                       ifelse(dfnum==2, "at least one species infected)",
                                              "both species infected)"))
   
-  xcoord <- ifelse(dfnum==1, 0.3, ifelse(dfnum==2, 0.6, 0.9))
-  ycoord <- ifelse(dfnum==1, 12500, ifelse(dfnum==2, 10000, 8000))
+  xcoord <- ifelse(dfnum==1, 0.25, ifelse(dfnum==2, 0.5, 0.8))
+  ycoord <- ifelse(dfnum==1, 9000, ifelse(dfnum==2, 8000, 8000))
   
   # Build matrix of N x N
   species_list = unique(df$Species_binomial)
@@ -104,8 +104,8 @@ for (dfnum in 1:length(dataframes_list)){
   
   for (species1 in species_list){
     for (species2 in species_list){
-      strains_sp1 = unique(df$Closest.reference.Wolbachia[df$Species_binomial == species1 & df$Wolbachia.presence == "Y"])
-      strains_sp2 = unique(df$Closest.reference.Wolbachia[df$Species_binomial == species2 & df$Wolbachia.presence == "Y"])
+      strains_sp1 = unique(df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[df$Species_binomial == species1 & df$Wolbachia.presence == "Y"])
+      strains_sp2 = unique(df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[df$Species_binomial == species2 & df$Wolbachia.presence == "Y"])
       common_strains <- intersect(strains_sp1, strains_sp2)
       common_strains <- na.omit(common_strains)
       common_strains_num <- length(common_strains)

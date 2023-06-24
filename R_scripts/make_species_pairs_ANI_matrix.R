@@ -16,7 +16,7 @@ library(tidyverse)
 
 # Since we have two versions of the data we run the script twice with different dataframes
 
-nuwt <- F
+nuwt <- T
 
 if(nuwt) {
   df <- read.csv("../Samples_all_wolbachia_presence_absence_infection_conservative.csv")
@@ -41,7 +41,7 @@ df <- df[!(df$Species_binomial %in% c("Brenthis hecate",
                                       "Thymelicus lineola")),]
 
 # Discard uninfected samples
-df <- df[!is.na(df$Closest.reference.Wolbachia),]
+df <- df[!is.na(df$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.),]
 tail(df)
 
 # Keep only genera where both species of the pair are infected
@@ -61,10 +61,10 @@ for (rownum in 1:nrow(df)){
     strains_splitted <- strsplit(strains, ", ")[[1]]
     for (strain_num in 1:length(strains_splitted)){
       if(strain_num == 1){
-        df[rownum, "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[rownum, "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       } else {
         df[nrow(df) +1, ] <- df[rownum, ]
-        df[nrow(df), "Closest.reference.Wolbachia"] <- strains_splitted[strain_num]
+        df[nrow(df), "Closest.reference.Wolbachia..dereplicated.s.ANI.0.99."] <- strains_splitted[strain_num]
       }
     }
   }
@@ -73,15 +73,15 @@ tail(df)
 
 # Erebia specimens mapped equally well to euryale_EE_932 and ligea_RO_EL_949, they always mapped slightly better to
 # euryale so we consider them that strain for this analysis
-df$Closest.reference.Wolbachia <- gsub("w.erebia_euryale.EE_932.v1.fna/w.erebia_ligea.RO_EL_949.v1.fna", 
-                                       "w.erebia_euryale.EE_932.v1.fna", df$Closest.reference.Wolbachia, fixed = T)
-
-# For P. eros we also have two strains with a slash, we will consider them the P. eros strain since it gets substantially higher coverages
-df$Closest.reference.Wolbachia <- gsub("w.polyommatus_eros.PE_1417.v2.fna/w.colias_crocea.Lep_ilColCroc_2.fna",
-                                       "w.polyommatus_eros.PE_1417.v2.fna", 
-                                       df$Closest.reference.Wolbachia, fixed = T)
-
-head(df)
+# df$Closest.reference.Wolbachia <- gsub("w.erebia_euryale.EE_932.v1.fna/w.erebia_ligea.RO_EL_949.v1.fna", 
+#                                        "w.erebia_euryale.EE_932.v1.fna", df$Closest.reference.Wolbachia, fixed = T)
+# 
+# # For P. eros we also have two strains with a slash, we will consider them the P. eros strain since it gets substantially higher coverages
+# df$Closest.reference.Wolbachia <- gsub("w.polyommatus_eros.PE_1417.v2.fna/w.colias_crocea.Lep_ilColCroc_2.fna",
+#                                        "w.polyommatus_eros.PE_1417.v2.fna", 
+#                                        df$Closest.reference.Wolbachia, fixed = T)
+# 
+# head(df)
 
 # Build matrix of N x N
 species_list = unique(df$Species_binomial)
@@ -97,9 +97,9 @@ for (species1 in species_list){
     ANI_list <- c()
     subset2 <- df[df$Species_binomial == species2,]
     for (samplenum1 in 1:nrow(subset1)){
-      strain1 <- subset1$Closest.reference.Wolbachia[samplenum1]
+      strain1 <- subset1$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[samplenum1]
       for (samplenum2 in 1:nrow(subset2)){
-        strain2 <- subset2$Closest.reference.Wolbachia[samplenum2]
+        strain2 <- subset2$Closest.reference.Wolbachia..dereplicated.s.ANI.0.99.[samplenum2]
         ANI_list[length(ANI_list)+1] <- ANI_matrix$ANI[ANI_matrix$Strain1 == strain1 & ANI_matrix$Strain2 == strain2]
         ANI_list[length(ANI_list)+1] <- ANI_matrix$ANI[ANI_matrix$Strain1 == strain2 & ANI_matrix$Strain2 == strain1]
       }
@@ -172,9 +172,9 @@ for (plotnum in 1:3){
                      nuwt_approach))
   abline(v = mean(ani_list), col = "red")
   if(nuwt){
-    text(98, 3000, paste0("p-value = ", pvalue))
+    text(97.8, 2500, paste0("p-value = ", pvalue))
   } else {
-    text(97.7, 3500, paste0("p-value = ", pvalue))
+    text(97.7, 3000, paste0("p-value = ", pvalue))
   }
   dev.off()
 }
